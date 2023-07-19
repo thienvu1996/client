@@ -24,6 +24,9 @@ import ShowAdmin from './components/ShowAdmin.js';
 // function
 import Booking from './components/Booking.js';
 import Blog from './components/Blog.js';
+import AcceptedBooking from './components/AcceptedBooking.js'
+import RejectedBooking from './components/RejectedBooking.js'
+import WaitingBooking from "./components/WaitingBooking.js";
 
 import Course from './components/Course.js';
 import { AuthorizeUser} from './middleware/auth';
@@ -78,7 +81,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/profile',
-        element:<Sidebar> <AuthorizeUser><Profile /></AuthorizeUser></Sidebar>
+        element: <AuthorizeUser><Profile /></AuthorizeUser>
     },
     {
         path: '/userRecovery',
@@ -100,7 +103,18 @@ const router = createBrowserRouter([
         path: '/booking',
         element:<Sidebar> <Booking></Booking></Sidebar>
     },
- 
+    {
+        path: '/acceptedBooking',
+        element:<Sidebar><AcceptedBooking></AcceptedBooking></Sidebar>
+    },
+    {
+        path: '/rejectedBooking',
+        element:<Sidebar><RejectedBooking></RejectedBooking></Sidebar>
+    },
+    {
+        path: '/waitingBooking',
+        element:<Sidebar><WaitingBooking></WaitingBooking></Sidebar>
+    },
     {
         path: '/course',
         element:<Sidebar> <Course></Course></Sidebar>

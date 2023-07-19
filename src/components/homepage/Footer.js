@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer>
 
-      <div className='containerFooter mx-auto'>
+      <div className='container mx-auto'>
         <div className='flex flex-col justify-between items-center lg:flex-row gap-y-5'>
           <a href='#'><img src={Logo} alt='' className='w-[370px] h-[300px]'></img></a>
           <p>&copy; 2023. All rights reserved. </p>

@@ -12,7 +12,7 @@ import { getAllGrades } from '../helper/gradeHelper.js';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate, Navigate } from 'react-router-dom';
 
-export default function Booking() {
+export default function RejectedBooking() {
     const [data, setData] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [newData, setNewData] = useState({})
@@ -41,7 +41,7 @@ export default function Booking() {
         setCustomers(customers.data);
         setGrade(grades.data)
         // console.log(data)
-
+        const accepted = response.data.filter(booking => booking.isAccepted === 1)
     }
 
     useEffect(() => {
@@ -56,7 +56,7 @@ export default function Booking() {
                 success: <b>Successfully...!</b>,
                 error: <b>Failed !!!</b>
             })
-            dataPromise.then(function () { navigate('/booking') }).catch(error => {
+            dataPromise.then(function () { navigate('/rejectedBooking') }).catch(error => {
                 console.error(error);
             });
         }
@@ -73,7 +73,7 @@ export default function Booking() {
                 success: <b>Successfully...!</b>,
                 error: <b>Failed !!!</b>
             })
-            dataPromise.then(function () { navigate('/booking') }).catch(error => {
+            dataPromise.then(function () { navigate('/rejectedBooking') }).catch(error => {
                 console.error(error);
             });
         } catch (error) {
@@ -81,9 +81,7 @@ export default function Booking() {
         }
     }
     function showStatus(status) {
-        if (status == -1) return 'Rejected'
-        else if (status == 0) return 'Waiting'
-        else if (status == 1) return 'Accepted'
+ if (status == -1) return 'Rejected'
     }
     const handleCreate = async (event, data) => {
         // event.preventDefault()
@@ -96,7 +94,7 @@ export default function Booking() {
                 success: <b>Successfully...!</b>,
                 error: <b>Failed !!!</b>
             })
-            dataPromise.then(function () { navigate('/booking') }).catch(error => {
+            dataPromise.then(function () { navigate('/rejectedBooking') }).catch(error => {
                 console.error(error);
             });
 
@@ -120,25 +118,14 @@ export default function Booking() {
                 success: <b>Successfully...!</b>,
                 error: <b>Failed !!!</b>
             })
-            dataPromise.then(function () { navigate('/booking') }).catch(error => {
+            dataPromise.then(function () { navigate('/acceptedBooking') }).catch(error => {
                 console.error(error);
             });
         } catch (error) {
             console.error(error);
         }
     }
-    function redirectAllBooking(){
-        navigate('/booking')        
-    }
-    function redirectAcceptedBooking(){
-        navigate('/acceptedBooking')        
-    }
-    function redirectRejectedBooking(){
-        navigate('/rejectedBooking')        
-    }
-    function redirectWaitingBooking(){
-        navigate('/waitingBooking')        
-    }
+  
     const handleReject = async (event, id) => {
         event.currentTarget.disabled = true;
         // event.preventDefault()
@@ -151,7 +138,7 @@ export default function Booking() {
                 success: <b>Successfully...!</b>,
                 error: <b>Failed !!!</b>
             })
-            dataPromise.then(function () { navigate('/booking') }).catch(error => {
+            dataPromise.then(function () { navigate('/acceptedBooking') }).catch(error => {
                 console.error(error);
             });
         } catch (error) {
@@ -174,24 +161,7 @@ export default function Booking() {
 
         <div className='max-w-4x2' style={{ marginLeft: '15rem' }}>
             <Toaster position='top-center' reverseOrder={false}></Toaster>
-            <div>
-                <button class="bg-blue-500 hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded"
-                    onClick={redirectAllBooking}>
-                    All
-                </button>
-                <button class="bg-blue-500 hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => redirectAcceptedBooking()}>
-                    Accepted Booking
-                </button>
-                <button class="bg-blue-500 hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => redirectWaitingBooking()}>
-                    Wating Booking
-                </button>
-                <button class="bg-blue-500 hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => redirectRejectedBooking()}>
-                    Rejected Booking
-                </button>
-            </div>
+           
             <div class="">
                 <table className='w-full whitespace-nowrap bg-white overflow-hidden rounded-lg shadow-sm mb-8'>
                     <thead>
@@ -204,11 +174,12 @@ export default function Booking() {
                         </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-200'>
-                        {currentdata.map((data) => (
-                            <tr key={data._id}>
-
-
-                                <td className='px-6 py-4'>{grades.map((grade) => {
+                        {currentdata.map((data) => {
+                            if (data.isAccepted === -1) {
+                                return (
+                                  <tr key={data._id}>
+                                    {/* <td>{grades.find(grade => grade._id === data.grade)._id}</td> */}
+                                    <td className='px-6 py-4'>{grades.map((grade) => {
                                     // {
                                     //   if(data._id == user._id)  [user.username]
                                     // }
@@ -262,7 +233,15 @@ export default function Booking() {
                                     }
                                 </td>
                             </tr>
-                        ))}
+                                  
+                                ) 
+                              } 
+                        
+
+
+                               
+                        }  
+                        )}
                     </tbody>
                 </table>
                

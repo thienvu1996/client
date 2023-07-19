@@ -24,6 +24,13 @@ export async function updateBooking(id) {
         return Promise.reject({ error: 'Could not update' });
     }
 }
+export async function rejectBooking(id) {
+    try {
+        return await placeholderApi.post(`/booking/rejectBooking/${id}`);
+    } catch (error) {
+        return Promise.reject({ error: 'Could not update' });
+    }
+}
 export async function getAllBookings() {
     try {
         const { data } = await placeholderApi.get('/booking/getAllBookings');
@@ -37,5 +44,29 @@ export async function createBooking(data) {
         return await placeholderApi.post(`/booking/createBooking`, data);
     } catch (error) {
         return Promise.reject({ error: 'Could not create' });
+    }
+}
+export async function getAcceptedBookings() {
+    try {
+        const { data } = await placeholderApi.get('/booking/accepted');
+        return Promise.resolve({ data });
+    } catch (error) {
+        return Promise.reject({ error: 'Could not get' });
+    }
+}
+export async function getWaitingBookings() {
+    try {
+        const { data } = await placeholderApi.get('/booking/waiting');
+        return Promise.resolve({ data });
+    } catch (error) {
+        return Promise.reject({ error: 'Could not get' });
+    }
+}
+export async function getRejectedBookings() {
+    try {
+        const { data } = await placeholderApi.get('/booking/rejected');
+        return Promise.resolve({ data });
+    } catch (error) {
+        return Promise.reject({ error: 'Could not get' });
     }
 }

@@ -27,7 +27,7 @@ export default function Course() {
   };
 
   useEffect(() => {
-    if (roleId != 2) {
+    if (roleId != 4) {
       navigate('*');
   } else if (token == null) {
       navigate('*');

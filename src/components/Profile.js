@@ -8,8 +8,11 @@ import useFetch from '../hooks/fetch.hook';
 import { updateUser } from '../helper/helper'
 import { useNavigate } from 'react-router-dom'
 
+import styles from '../styles/Username.module.css';
+import extend from '../styles/Profile.module.css'
+import Footer from './homepage/Footer';
+import Header from './homepage/Header';
 
-import '../styles/profile.css'
 export default function Profile() {
 
   const [file, setFile] = useState();
@@ -54,49 +57,55 @@ export default function Profile() {
     navigate('/')
   }
 
-  if (isLoading) return <h1 className='text-2xl font-bold' style={{ marginLeft: '2rem' }}>isLoading</h1>;
+  if (isLoading) return <h1 className='text-2xl font-bold'>isLoading</h1>;
   if (serverError) return <h1 className='text-xl text-red-500'>{serverError.message}</h1>
-  
+
   return (
-    <div className="max-w-4x2 max-h-4x2 background_img">
-    <h1 className="title">YOGALIFE EDIT YOUR PROFILE</h1>
-    <Toaster position='top-center' reverseOrder={false}></Toaster>
+    <div className='overflow-hidden'>
+    <Header/>
+    <div className="mx-10 px-5 py-10">
 
-    <div className="formContainer">
-      <div className="formBox">
+      <Toaster position='top-center' reverseOrder={false}></Toaster>
 
-        <div className="title">
-          <h4 className="titleText">Profile</h4>
+      <div className='flex justify-center items-center h-70'>
+        <div className={`${styles.glass} ${extend.glass}`} style={{ width: "45%", paddingTop: '3em', paddingBottom: '3em' }}>
 
-          <span className="subtitle">
-            You can update the details.
-          </span>
+          <div className="title flex flex-col items-center">
+            <h4 className='text-5xl font-bold'>Profile</h4>
+            <span className='py-4 text-1xl w-2/3 text-center text-gray-500'>
+              You can update the details.
+            </span>
+          </div>
+
+          <form className='py-1' onSubmit={formik.handleSubmit}>
+            <div className='profile flex justify-center py-10'>
+              <label htmlFor="profile">
+                <img src={apiData?.profile || file || avatar} className={`${styles.profile_img} ${extend.profile_img}`} alt="avatar" />
+              </label>
+
+              <input onChange={onUpload} type="file" id='profile' name='profile' />
+            </div>
+
+            <div className="textbox flex flex-col items-center gap-6">
+              <input {...formik.getFieldProps('phone')} className={`${styles.textbox} ${extend.textbox}`} type="text" placeholder='Mobile No.' />
+              <div className="name flex w-3/4 gap-10">
+                <input {...formik.getFieldProps('email')} className={`${styles.textbox} ${extend.textbox}`} type="text" placeholder='Email*' />
+              </div>
+              <input {...formik.getFieldProps('address')} className={`${styles.textbox} ${extend.textbox}`} type="text" placeholder='Address' />
+              <div className="name flex w-3/4 gap-10">
+                <input {...formik.getFieldProps('description')} className={`${styles.textbox} ${extend.textbox}`} type="text" placeholder='Description*' />
+              </div>
+              <button className={styles.btn} type='submit'>Update</button>
+
+
+            </div>
+          </form>
+
         </div>
-
-        <form className="form" onSubmit={formik.handleSubmit}>
-          <div className="avatarContainer">
-            <label htmlFor="profile">
-      <img src={avatar} className="avatar" alt="avatar" />
-            </label>
-
-            <input onChange={onUpload} type="file" id='profile' name='profile' />
-          </div>
-
-          <div className="inputContainer">
-            
-            <input {...formik.getFieldProps('phone')} className="input" type="text" placeholder='Mobile No.' />
-            <input {...formik.getFieldProps('email')} className="input" type="text" placeholder='Email*' />
-            <input {...formik.getFieldProps('address')} className="input" type="text" placeholder='Address' />
-            <input {...formik.getFieldProps('description')} className="input" type="text" placeholder='Description*' />
-            <button className="button" type='submit'>Update</button>
-          </div>
-          <div >
-  <img src="http://localhost:3000/static/media/logo.21031b5d746360af3610.png" alt="Logo" />
-</div>
-        </form>
-
       </div>
     </div>
-  </div>
-)
+    <Footer/>
+    </div>
+  )
 }
+

@@ -28,7 +28,7 @@ export default function Blog() {
   let token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (roleId <3 || token == null) {
+    if (roleId < 3 || token == null) {
       navigate("*");
     } else {
       let dataPromise = fetchData();
@@ -178,16 +178,16 @@ export default function Blog() {
                 )}
               </td>
                 <td className="px-6 py-4">
-                <img src={showImg(blog._image)} alt="" style={{ width: '200px', height: '200px', objectFit: 'cover', display: 'block', margin: 'auto' }} />
+                  <img src={showImg(blog._image)} alt="" />
                 </td>
                 <td className="px-6 py-4">
-                  {roleId >= 4 && (
+                  {roleId >= 3 && (
                     <>
                       <button
                         className="rounded bg-red-500 px-2 py-1 font-bold text-white hover:bg-red-700"
                         onClick={(event) => handleDelete(event, blog._id)}
                       >
-                        Hide
+                        Delete
                       </button>
                     </>
                   )}

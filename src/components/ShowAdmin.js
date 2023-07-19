@@ -16,6 +16,12 @@ export default function ShowAdmins() {
         setUpdatedUserData({ ...updatedUserData, [event.target.name]: event.target.value });
 
     }
+    function showRoleName(roleId) {
+        if (roleId == 1) return 'CUSTOMER'
+        else if (roleId == 2) return 'MENTOR'
+        else if (roleId == 3) return 'STAFF'
+        else if (roleId == 4) return 'ADMIN'
+    }
     let roleId = localStorage.getItem('roleId');
     let token = localStorage.getItem('token');
     const fetchData = async () => {
@@ -63,7 +69,16 @@ export default function ShowAdmins() {
         setUpdatedUserData(user);
         setShowModal(true);
     }
+    function valuesContext(value) {
+        if (value == null || value == '') return 'Not yet'
+        else return value;
 
+    }
+    function showActive(activeId) {
+        if (activeId == 0) return 'UNACTIVED'
+        else if (activeId == 1) return 'ACTIVED'
+
+    }
     const handleUpdate = async (event) => {
         event.preventDefault()
         try {
@@ -76,37 +91,41 @@ export default function ShowAdmins() {
                 error: <b>Failed !!!</b>
             })
             dataPromise.then(function () { navigate('/showAdmins') }).catch(error => {
-                console.error(error);
+                console.log(error);
             });
         } catch (error) {
-            console.error(error);
+            console.log(error);
         }
     }
 
-      // Tính toán các chỉ số cho phân trang
-  const [currentPage, setCurrentPage] = useState(1);
-  const [userPerPage, setUserPerPage] = useState(10);
+    // Tính toán các chỉ số cho phân trang
+    const [currentPage, setCurrentPage] = useState(1);
+    const [userPerPage, setUserPerPage] = useState(10);
 
-  const indexOfLastUser = currentPage * userPerPage;
-  const indexOfFirstUser = indexOfLastUser - userPerPage;
-  const currentdata = data.slice(indexOfFirstUser, indexOfLastUser);
+    const indexOfLastUser = currentPage * userPerPage;
+    const indexOfFirstUser = indexOfLastUser - userPerPage;
+    const currentdata = data.slice(indexOfFirstUser, indexOfLastUser);
 
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
     return (
         <div className=''>
-           <div className='max-w-4x2' style={{marginLeft: '15rem'}}>
+            <div className='max-w-4x2' style={{ marginLeft: '15rem' }}>
 
                 <Toaster position='top-center' reverseOrder={false}></Toaster>
-                <div className='main-content'>
+                <div className='mb-8 w-full overflow-hidden whitespace-nowrap rounded-lg bg-white shadow-sm'>
                     <table className='w-full whitespace-nowrap bg-white overflow-hidden rounded-lg shadow-sm mb-8'>
                         <thead>
                             <tr className='text-left font-bold'>
-                                <th className='px-6 pt-5 pb-4'>Name</th>
+                                <th className='px-6 pt-5 pb-4'>Username</th>
                                 <th className='px-6 pt-5 pb-4'>Email</th>
+                                <th className="px-6 pb-4 pt-5">Address</th>
+                                <th className="px-6 pb-4 pt-5">Phone</th>
                                 <th className='px-6 pt-5 pb-4'>Role</th>
-                                <th className='px-6 pt-5 pb-4'>Actions</th>
+                                <th className="px-6 pb-4 pt-5">Active</th>
+                                
+
                             </tr>
                         </thead>
                         <tbody className='divide-y divide-gray-200'>
@@ -114,21 +133,11 @@ export default function ShowAdmins() {
                                 <tr key={user._id}>
                                     <td className='px-6 py-4'>{user.username}</td>
                                     <td className='px-6 py-4'>{user.email}</td>
-                                    <td className='px-6 py-4'>{user.roleId}</td>
-                                    <td className='px-6 py-4'>
-                                        <button
-                                            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2'
-                                            onClick={() => handleEdit(user)}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
-                                            onClick={() => handleDelete(user._id)}
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+                                    <td className='px-6 py-4'>{valuesContext(user.address)}</td>
+                                    <td className='px-6 py-4'>{valuesContext(user.phone)}</td>
+                                    <td className='px-6 py-4'>{showRoleName(user.roleId)}</td>
+                                    <td className="px-6 py-4">
+                                        {showActive(user.isActive)}  </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -204,44 +213,42 @@ export default function ShowAdmins() {
                             <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
                         </>
                     ) : null}
-  <Pagination
-        userPerPage={userPerPage}
-        totalUser={data.length}
-        currentdata={currentPage}
-        paginate={paginate}
-      />
+                    <Pagination
+                        userPerPage={userPerPage}
+                        totalUser={data.length}
+                        currentdata={currentPage}
+                        paginate={paginate}
+                    />
                 </div >
             </div>
         </div>
 
 
     )
-}const Pagination = ({ userPerPage, totalUser, currentdata, paginate }) => {
+} const Pagination = ({ userPerPage, totalUser, currentdata, paginate }) => {
     const pageNumbers = [];
-  
+
     for (let i = 1; i <= Math.ceil(totalUser / userPerPage); i++) {
-      pageNumbers.push(i);
+        pageNumbers.push(i);
     }
-  
+
     return (
-      <div className="mt-4 flex justify-center">
-        <ul className="inline-flex space-x-2">
-          {pageNumbers.map((number) => (
-            <li key={number}>
-              <button
-                onClick={() => paginate(number)}
-                className={`rounded-lg px-3 py-1 ${
-                  number === currentdata
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {number}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="mt-4 flex justify-center">
+            <ul className="inline-flex space-x-2">
+                {pageNumbers.map((number) => (
+                    <li key={number}>
+                        <button
+                            onClick={() => paginate(number)}
+                            className={`rounded-lg px-3 py-1 ${number === currentdata
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200"
+                                }`}
+                        >
+                            {number}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
-  };
-  
+};

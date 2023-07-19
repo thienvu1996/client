@@ -8,7 +8,7 @@ export default function Login() {
     <div className='overflow-hidden'>
       <Header />
       <Content />
-      {/* <Footer /> */}
+      <Footer />
     </div>
   )
 }

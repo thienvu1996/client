@@ -4,7 +4,7 @@ import { BsStarFill, BsStarHalf } from 'react-icons/bs';
 const Courses = () => {
   return (
     <section className='section-sm lg:section-lg'>
-      <div className='containerCourses mx-auto'>
+      <div className='container mx-auto'>
         <div className='text-center mb-16 lg:mb-32'> <h2 className='h2 mb-3 lg:mb-[18px]'
           data-aos='fade-down'
           data-aos-delay='200'

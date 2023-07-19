@@ -95,6 +95,23 @@ export async function getUser({ username }) {
         return { error: "Password doesn't Match...!" }
     }
 }
+export async function disableUser(id) {
+    try {
+        console.log(id);
+        return await placeholderApi.post(`/api/disableUser/${id}`);
+       
+    } catch (error) {
+        return { error: error }
+    }
+}
+export async function ableUser(id) {
+    try {
+        return await placeholderApi.post(`/api/ableUser/${id}`);
+        
+    } catch (error) {
+        return { error: error }
+    }
+}
 
 /** register user function */
 export async function registerUser(credentials) {

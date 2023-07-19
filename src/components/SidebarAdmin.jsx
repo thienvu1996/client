@@ -32,6 +32,7 @@ const Sidebar = ({ children }) => {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(true);
   const [showDropdown2, setShowDropdown2] = useState(true);
+  const [showBookingDropdown, setShowBookingDropdown] = useState(false);
   const roleId = localStorage.getItem("roleId");
   const isAdmin = roleId === "4";
   const isStaff = roleId === "3";
@@ -78,12 +79,8 @@ const Sidebar = ({ children }) => {
    
   ];
   const menuItemContents = [
-    {
-      path: "/Booking",
-      name: "Booking",
-      icon: <FaShoppingCart />,
-      visible: isAdmin || isStaff,
-    },
+   
+    
     {
       path: "/blog",
       name: "Blogs",
@@ -109,6 +106,32 @@ const Sidebar = ({ children }) => {
       visible: isAdmin || isStaff||isUser || isMentor
     },
   ];
+  const menuItemBooking = [
+    {
+      path: "/Booking",
+      name: "Booking",
+      icon: <FaShoppingCart />,
+      visible: isAdmin || isStaff,
+    },
+    {
+    path: "/acceptedBooking",
+    name: "Accepted",
+    icon: <FaShoppingCart />,
+    visible: isAdmin || isStaff,
+  },
+  {
+    path: "/rejectedBooking",
+    name: "Rejected",
+    icon: <FaShoppingCart />,
+    visible: isAdmin || isStaff,
+  },
+  {
+    path: "/waitingBooking",
+    name: "Waiting",
+    icon: <FaShoppingCart />,
+    visible: isAdmin || isStaff,
+  },]
+  ;
   function userLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("roleId");
@@ -119,22 +142,22 @@ const Sidebar = ({ children }) => {
     <div className="main">
       <div style={{ width: isOpen ? "200px" : "50px" }} className="sidebar">
         <div className="top_section">
-          <h1 style={{ display: isOpen ? "block" : "none" }} className="logo">
-            Good Life
-          </h1>
-          {/* <div style={{ marginLeft: isOpen ? "50px" : "0px" }} className="bars">
-            <FaBars onClick={toggle} />
-          </div> */}
-        </div>
+                <h1 style={{ display: isOpen ? "block" : "none" }} className="logo">
+                  Good Life
+                </h1>
+                  {/* <div style={{ marginLeft: isOpen ? "50px" : "0px" }} className="bars">
+                    <FaBars onClick={toggle} />
+                  </div> */}
+               </div>
       
-          <button onClick={() => setShowDropdown(!showDropdown)}>
-          <div className="centered flex" >
-            <VscAccount className="barsdp" /> Management
-          </div>
-        </button>
-        {showDropdown &&
-          menuItemManagement.map((item, index) => {
-            if (item.visible) {
+              <button onClick={() => setShowDropdown(!showDropdown)}>
+           <div className="centered flex" >
+              <VscAccount className="barsdp" /> Management
+                    </div>
+                  </button>
+                  {showDropdown &&
+                    menuItemManagement.map((item, index) => {
+                      if (item.visible) {
               return (
                 <NavLink
                   to={item.path}
@@ -152,19 +175,19 @@ const Sidebar = ({ children }) => {
                 </NavLink>
               );
             }
-          })}
+             })}
         
-        {!isUser &&
-        <button onClick={() => setShowDropdown2(!showDropdown2)}>
-          <div className="centered flex">
-            <FaListUl className="barsdp" /> Tasks
-          </div>
-        </button>}
+              {!isUser &&
+              <button onClick={() => setShowDropdown2(!showDropdown2)}>
+              <div className="centered flex">
+             <FaListUl className="barsdp" /> Tasks
+              </div>
+             </button>}
 
-        <div className="">
-          {showDropdown2 &&
-            menuItemContents.map((item, index) => {
-              if (item.visible) {
+              <div className="">
+               {showDropdown2 &&
+               menuItemContents.map((item, index) => {
+                if (item.visible) {
                 return (
                   <NavLink
                     to={item.path}
@@ -180,11 +203,41 @@ const Sidebar = ({ children }) => {
                       {item.name}
                     </div>
                   </NavLink>
+                  
                 );
-              }
-            })}
-        </div>
-      
+                
+                }})}
+            
+              </div>
+              {!isUser &&
+              <button onClick={() => setShowBookingDropdown(!showBookingDropdown)}>
+              <div className="centered flex">
+             <FaListUl className="barsdp" /> Booking
+              </div>
+             </button>}
+              {showBookingDropdown &&
+               menuItemBooking.map((item, index) => {
+                if (item.visible) {
+                return (
+                  <NavLink
+                    to={item.path}
+                    key={index}
+                    className="link"
+                    activeclassName="active"
+                  >
+                    <div className="icon">{item.icon}</div>
+                    <div
+                      style={{ display: isOpen ? "block" : "none" }}
+                      className="link_text"
+                    >
+                      {item.name}
+                    </div>
+                  </NavLink>
+                  
+                );
+                
+                }})}
+
         <div className="profile-logout-container">
         <div className="profile" >
             <NavLink to="/" >

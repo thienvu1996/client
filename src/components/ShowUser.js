@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getAllUser, deleteUser, updateUser_1 } from "../helper/helper";
+import { getAllUser, deleteUser, updateUser_1, ableUser, disableUser } from "../helper/helper";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
+import Select from 'react-select'
+import { DataRole } from '../helper/dataRole.js'
 export default function ShowUsers() {
   const [data, setData] = useState([]);
   const [updatedUserData, setUpdatedUserData] = useState({});
@@ -10,15 +11,23 @@ export default function ShowUsers() {
   const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
-  const handleChange = (event) => {
-    setUpdatedUserData({
-      ...updatedUserData,
-      [event.target.name]: event.target.value,
-    });
-  };
+  // const handleChange = (event) => {
+  //   // console.log(event);
+  //   // console.log(event);
+  //   console.log(event);
+  //   setUpdatedUserData({
+  //     ...updatedUserData,
+  //     [event.target.name]: event.target.value,
+  //   });
+  // };
   let roleId = localStorage.getItem("roleId");
   let token = localStorage.getItem("token");
-
+  function showRoleName(roleId) {
+    if (roleId == 1) return 'CUSTOMER'
+    else if (roleId == 2) return 'MENTOR'
+    else if (roleId == 3) return 'STAFF'
+    else if (roleId == 4) return 'ADMIN'
+  }
   const fetchData = async () => {
     const response = await getAllUser();
     setData(response.data);
@@ -44,10 +53,57 @@ export default function ShowUsers() {
         });
     }
   }, []);
-
+  let optionsRole = DataRole.map(function (role) {
+    return { value: role.roleId, label: role.roleName };
+  })
+  const handleSelectRole = (event, meta) => {
+    console.log(meta.name);
+    console.log(event.value);
+    setUpdatedUserData({ ...updatedUserData, [meta.name]: event.value });
+  }
   const handleDelete = async (userId) => {
     try {
       const response = await deleteUser(userId);
+      let dataPromise = fetchData();
+      toast.promise(dataPromise, {
+        loading: "Loading...",
+        success: <b>Successfully...!</b>,
+        error: <b>Failed !!!</b>,
+      });
+      dataPromise
+        .then(function () {
+          navigate("/showUser");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleActive = async (userId) => {
+    try {
+      await ableUser(userId);
+      let dataPromise = fetchData();
+      toast.promise(dataPromise, {
+        loading: "Loading...",
+        success: <b>Successfully...!</b>,
+        error: <b>Failed !!!</b>,
+      });
+      dataPromise
+        .then(function () {
+          navigate("/showUser");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleUnactive = async (id) => {
+    try {
+      await disableUser(id);
       let dataPromise = fetchData();
       toast.promise(dataPromise, {
         loading: "Loading...",
@@ -70,29 +126,30 @@ export default function ShowUsers() {
     setUpdatedUserData(user);
     setShowModal(true);
   };
+  function valuesContext(value) {
+    if (value == null || value == '') return 'Not yet'
+    else return value;
 
+  }
   const handleUpdate = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     try {
-      const response = await updateUser_1(updatedUserData._id, updatedUserData); // Call your update function to update the user data
+      console.log(updatedUserData)
+      await updateUser_1(updatedUserData._id, updatedUserData);
       setShowModal(false);
       let dataPromise = fetchData();
       toast.promise(dataPromise, {
-        loading: "Loading...",
+        loading: 'Loading...',
         success: <b>Successfully...!</b>,
-        error: <b>Failed !!!</b>,
+        error: <b>Failed !!!</b>
+      })
+      dataPromise.then(function () { navigate('/showUser') }).catch(error => {
+        console.log(error);
       });
-      dataPromise
-        .then(function () {
-          navigate("/showUser");
-        })
-        .catch((error) => {
-          console.error(error);
-        });
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
-  };
+  }
   // Tính toán các chỉ số cho phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const [userPerPage, setUserPerPage] = useState(10);
@@ -100,7 +157,11 @@ export default function ShowUsers() {
   const indexOfLastUser = currentPage * userPerPage;
   const indexOfFirstUser = indexOfLastUser - userPerPage;
   const currentdata = data.slice(indexOfFirstUser, indexOfLastUser);
+  function showActive(activeId) {
+    if (activeId == 0) return 'UNACTIVED'
+    else if (activeId == 1) return 'ACTIVED'
 
+  }
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -110,9 +171,12 @@ export default function ShowUsers() {
       <table className="mb-8 w-full overflow-hidden whitespace-nowrap rounded-lg bg-white shadow-sm">
         <thead>
           <tr className="text-left font-bold">
-            <th className="px-6 pb-4 pt-5">Name</th>
+            <th className="px-6 pb-4 pt-5">Username</th>
             <th className="px-6 pb-4 pt-5">Email</th>
+            <th className="px-6 pb-4 pt-5">Address</th>
+            <th className="px-6 pb-4 pt-5">Phone</th>
             <th className="px-6 pb-4 pt-5">Role</th>
+            <th className="px-6 pb-4 pt-5">Active</th>
             <th className="px-6 pb-4 pt-5">Actions</th>
           </tr>
         </thead>
@@ -121,9 +185,13 @@ export default function ShowUsers() {
             <tr key={user._id}>
               <td className="px-6 py-4">{user.username}</td>
               <td className="px-6 py-4">{user.email}</td>
-              <td className="px-6 py-4">{user.roleId}</td>
+              <td className="px-6 py-4">{valuesContext(user.address)}</td>
+              <td className="px-6 py-4">{valuesContext(user.phone)}</td>
+              <td className="px-6 py-4">{showRoleName(user.roleId)}</td>
               <td className="px-6 py-4">
-                {roleId == 4 && (
+                {showActive(user.isActive)}  </td>
+              <td className="px-6 py-4">
+                {user.roleId <= 3  && (
                   <>
                     <button
                       className="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
@@ -131,12 +199,23 @@ export default function ShowUsers() {
                     >
                       Edit
                     </button>
-                    <button
-                      className="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
-                      onClick={() => handleDelete(user._id)}
-                    >
-                      Delete
-                    </button>
+                    {user.isActive == 1 && (
+                      <button
+                        className="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
+                        onClick={() => handleUnactive(user._id)}
+                      >
+                        Unactive
+                      </button>
+                    )}
+                    {user.isActive == 0 && (
+                      <button
+                        className="mr-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                        onClick={() => handleActive(user._id)}
+                      >
+                        Active
+                      </button>
+                    )}
+
                   </>
                 )}
               </td>
@@ -164,44 +243,25 @@ export default function ShowUsers() {
                 </div>
                 {/*body*/}
                 <form>
-                  <div className="mb-4">
-                    <label className="mb-2 block font-bold text-gray-700">
-                      Name:
-                    </label>
-                    <input
-                      type="text"
-                      name="username"
-                      value={updatedUserData.username}
-                      onChange={handleChange}
-                      className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="mb-2 block font-bold text-gray-700">
-                      Email:
-                    </label>
-                    <input
-                      type="text"
-                      name="email"
-                      value={updatedUserData.email}
-                      onChange={handleChange}
-                      className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="mb-4">
+                  {/* <div className="mb-4">
                     <label className="mb-2 block font-bold text-gray-700">
                       Role:
                     </label>
                     <input
-                      type="text"
-                      name="role"
+                      type="number"
+                      name="roleId"
                       value={updatedUserData.roleId}
                       onChange={handleChange}
                       className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                     />
+                  </div> */}
+
+                  <div className="mb-4">
+                    <label className="block text-gray-700 font-bold mb-2">Role Name :</label>
+                    <Select options={optionsRole} name="roleId" onChange={(event, meta) => handleSelectRole(event, meta)} />
                   </div>
+
+
                   <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
                     <button
                       className="background-transparent mb-1 mr-1 px-6 py-2 text-sm font-bold uppercase text-red-500 outline-none transition-all duration-150 ease-linear focus:outline-none"
@@ -253,11 +313,10 @@ const Pagination = ({ userPerPage, totalUser, currentdata, paginate }) => {
           <li key={number}>
             <button
               onClick={() => paginate(number)}
-              className={`rounded-lg px-3 py-1 ${
-                number === currentdata
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              }`}
+              className={`rounded-lg px-3 py-1 ${number === currentdata
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
+                }`}
             >
               {number}
             </button>

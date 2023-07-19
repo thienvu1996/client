@@ -31,7 +31,7 @@ export default function Grade() {
     let token = localStorage.getItem('token');
     let navigate = useNavigate()
     useEffect(() => {
-        if (roleId != 2) {
+        if (roleId < 2) {
             navigate('*');
         } else if (token == null) {
             navigate('*');
@@ -169,7 +169,7 @@ export default function Grade() {
                                 })}</td>
                                 <td className='px-6 py-4'>{grade.gradeName}</td>
                                 <td className="px-6 py-4">
-                <img src={showImg(grade._image)} alt="" style={{ width: '200px', height: '200px', objectFit: 'cover', display: 'block', margin: 'auto' }} />
+                                    <img src={showImg(grade._image)} alt="" />
                                 </td>
                                 <td className='px-6 py-4'>{grade.startTimeGrade}</td>
                                 <td className='px-6 py-4'>{grade.endTimeGrade}</td>
@@ -179,7 +179,7 @@ export default function Grade() {
                                         className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
                                         onClick={() => handleDelete(grade._id)}
                                     >
-                                        Hide
+                                        Delete
                                     </button>
                                 </td>
                             </tr>
